@@ -1,4 +1,3 @@
-import { compat } from 'million/react';
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom';
 
@@ -126,17 +125,17 @@ function App() {
           />
         </div>
         {catalog.length === 0 ? (
-          <div>
+          <div style={{ width: '100%' }}>
             <br />
             Loading...
           </div>
         ) : (
-          <>
+          <div style={{ width: '100%' }}>
             <br />
             <hr />
             <br />
             <div>{catalogView}</div>
-          </>
+          </div>
         )}
       </div>
     </>
@@ -145,6 +144,4 @@ function App() {
 
 const root = createRoot(document.querySelector('#app'));
 
-compat(() => {
-  root.render(<App />);
-});
+root.render(<App />);
