@@ -1,6 +1,6 @@
-import { million } from 'million/vite-plugin-million';
+import million from 'million/compiler';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [million({ react: true })],
+  plugins: [million.vite()],
 });
