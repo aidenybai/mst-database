@@ -3,49 +3,55 @@ import { createRoot } from 'react-dom/client';
 import { block } from 'million/react';
 
 function Project({
-  opts: { year, title, authors, abstract, keywords, paper, poster, notes },
+  opts: { year, title, authors, abstract, keywords, paper, poster },
   key,
 }) {
+  const [open, setOpen] = useState(false);
+  const handleClick = () => {
+    setOpen(!open);
+  };
   return (
-    <details key={key} style={{ paddingBottom: '1rem' }}>
-      <summary style={{ display: 'flex' }}>
-        <b style={{ marginRight: 'auto' }}>{title}</b>{' '}
-        {keywords && <a style={{ fontSize: '0.8rem' }}>{keywords}</a>}
-      </summary>
-      <p>
-        <b>Year:</b> {year}
-      </p>
-      <p>
-        <b>Authors:</b> {authors}
-      </p>
-      <p>
-        <b>Keywords:</b> {keywords}
-      </p>
-      <p>
-        <b>Links:</b>{' '}
-        <a href={paper} target="_blank">
-          Paper
-        </a>{' '}
-        |{' '}
-        <a target="_blank" href={poster}>
-          Poster
-        </a>
-      </p>
-      <p>
-        <b>Abstract:</b>
-        <br />
-        {abstract}
-      </p>
-      <p>
-        <b>Author Notes:</b>
-        <br />
-        {notes || 'N/A'}
-      </p>
-    </details>
+    <article style={{ padding: '2rem', marginBottom: '1rem' }}>
+      <details key={key} onClick={handleClick}>
+        <summary open={open}>
+          <div style={{ display: 'flex' }}>
+            <span style={{ marginRight: 'auto' }}>
+              <b>{title}</b>
+              <span style={{ opacity: 0.5 }}> · {year}</span>
+            </span>{' '}
+            <a style={{ fontSize: '0.8rem' }}>{keywords}</a>
+          </div>
+          <br />
+          <div style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: 0.6 }}>
+            {open ? abstract : `${abstract.substring(0, 200)}...`}
+          </div>
+        </summary>
+        <p>{authors}</p>
+        <p>
+          <a
+            style={{ padding: '0.25rem 1.5rem' }}
+            role="button"
+            href={paper}
+            target="_blank"
+          >
+            Paper
+          </a>{' '}
+          <a
+            style={{ padding: '0.25rem 1.5rem' }}
+            role="button"
+            target="_blank"
+            href={poster}
+            className="secondary"
+          >
+            Poster
+          </a>
+        </p>
+      </details>
+    </article>
   );
 }
 
-const ProjectBlock = block(Project);
+const ProjectBlock = Project;
 
 function App() {
   const [catalog, setCatalog] = useState([]);
@@ -134,8 +140,6 @@ function App() {
                 }}
               />
               <div style={{ width: '100%' }}>
-                <br />
-                <hr />
                 <br />
                 <div>{catalogView}</div>
               </div>
