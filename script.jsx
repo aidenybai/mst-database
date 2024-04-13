@@ -1,53 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { block } from 'million/react';
+import TinderCard from 'react-tinder-card';
+import FuzzySearch from 'fuzzy-search';
 
 function Project({
   opts: { year, title, authors, abstract, keywords, paper, poster },
-  key,
 }) {
   const [open, setOpen] = useState(false);
-  const handleClick = () => {
+  const handleClick = (event) => {
+    event.preventDefault();
     setOpen(!open);
   };
   return (
-    <article style={{ padding: '2rem', marginBottom: '1rem' }}>
-      <details key={key} onClick={handleClick}>
-        <summary open={open}>
-          <div style={{ display: 'flex' }}>
-            <span style={{ marginRight: 'auto' }}>
-              <b>{title}</b>
-              <span style={{ opacity: 0.5 }}> · {year}</span>
-            </span>{' '}
-            <a style={{ fontSize: '0.8rem' }}>{keywords}</a>
-          </div>
-          <br />
-          <div style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: 0.6 }}>
-            {open ? abstract : `${abstract.substring(0, 200)}...`}
-          </div>
-        </summary>
-        <p>{authors}</p>
-        <p>
-          <a
-            style={{ padding: '0.25rem 1.5rem' }}
-            role="button"
-            href={paper}
-            target="_blank"
-          >
-            Paper
-          </a>{' '}
-          <a
-            style={{ padding: '0.25rem 1.5rem' }}
-            role="button"
-            target="_blank"
-            href={poster}
-            className="secondary"
-          >
-            Poster
-          </a>
-        </p>
-      </details>
-    </article>
+    <div key={title}>
+      <span className="sidenote" style={{ fontSize: '0.8rem' }}>
+        Topics: <span style={{ fontStyle: 'italic' }}>{keywords}</span>
+        <br />
+        By: {authors}
+      </span>
+      <article
+        style={{
+          padding: '2rem',
+          marginBottom: '1rem',
+          border: '1px solid #767676',
+          borderRadius: '0.15rem',
+          background: '#f9fafb',
+        }}
+      >
+        <details open={open} onClick={handleClick}>
+          <summary>
+            <div style={{ display: 'flex' }}>
+              <span style={{ marginRight: 'auto' }}>
+                <b>{title}</b>
+                <span style={{ opacity: 0.5 }}> · {year}</span>
+              </span>{' '}
+            </div>
+            <p style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: 0.6 }}>
+              {open ? (
+                <span>
+                  {abstract}
+                  <p>{authors}</p>
+                  <p>
+                    <a role="button" href={paper} target="_blank">
+                      Paper
+                    </a>
+                    {' ・ '}
+                    <a role="button" target="_blank" href={poster}>
+                      Poster
+                    </a>
+                  </p>
+                  <br />
+                  <br />
+                  <a role="button" disabled>
+                    Show less...
+                  </a>
+                </span>
+              ) : (
+                <span>
+                  {abstract.substring(0, 200)}...
+                  <br />
+                  <br />
+                  <a role="button" disabled>
+                    Show more...
+                  </a>
+                </span>
+              )}
+            </p>
+          </summary>
+        </details>
+      </article>
+    </div>
   );
 }
 
@@ -58,7 +80,7 @@ function App() {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    fetch('https://literallyjustanabel.aidenbai.repl.co/mst')
+    fetch('https://mst-database-server-production.up.railway.app/mst')
       .then((res) => res.json())
       .then((json) => setCatalog(json));
   }, []);
@@ -67,12 +89,16 @@ function App() {
     return timestamp.substring(5, 9);
   };
 
-  const catalogView = catalog
-    .filter(
-      ({ title, abstract, author, keywords }) =>
-        query === '' ||
-        (title + abstract + author + keywords).toLowerCase().includes(query)
-    )
+  const searcher = useMemo(
+    () =>
+      new FuzzySearch(catalog, ['authors', 'title', 'keywords'], {
+        caseSensitive: false,
+      }),
+    [catalog]
+  );
+
+  const catalogView = searcher
+    .search(query)
     .sort((a, b) => {
       return (
         Number(b.year || getYear(b.timestamp)) -
@@ -93,19 +119,24 @@ function App() {
         approved,
       }) => {
         return approved === 'yes' ? (
-          <ProjectBlock
-            key={title}
-            opts={{
-              year: year || timestamp.substring(5, 9),
-              title,
-              authors,
-              abstract,
-              keywords,
-              paper,
-              poster,
-              notes,
-            }}
-          />
+          <TinderCard
+            onSwipe={() => {}}
+            onCardLeftScreen={() => {}}
+            preventSwipe={['right', 'left']}
+          >
+            <ProjectBlock
+              opts={{
+                year: year || timestamp.substring(5, 9),
+                title,
+                authors,
+                abstract,
+                keywords,
+                paper,
+                poster,
+                notes,
+              }}
+            />
+          </TinderCard>
         ) : (
           ''
         );
@@ -151,6 +182,6 @@ function App() {
   );
 }
 
-const root = createRoot(document.body);
+const root = createRoot(document.getElementById('root'));
 
 root.render(<App />);
