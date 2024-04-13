@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TinderCard from 'react-tinder-card';
 import FuzzySearch from 'fuzzy-search';
 
 function Project({
