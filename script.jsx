@@ -119,24 +119,18 @@ function App() {
         approved,
       }) => {
         return approved === 'yes' ? (
-          <TinderCard
-            onSwipe={() => {}}
-            onCardLeftScreen={() => {}}
-            preventSwipe={['right', 'left']}
-          >
-            <ProjectBlock
-              opts={{
-                year: year || timestamp.substring(5, 9),
-                title,
-                authors,
-                abstract,
-                keywords,
-                paper,
-                poster,
-                notes,
-              }}
-            />
-          </TinderCard>
+          <ProjectBlock
+            opts={{
+              year: year || timestamp.substring(5, 9),
+              title,
+              authors,
+              abstract,
+              keywords,
+              paper,
+              poster,
+              notes,
+            }}
+          />
         ) : (
           ''
         );
