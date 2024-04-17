@@ -26,7 +26,7 @@ function Project({
           background: '#f9fafb',
         }}
       >
-        <details open={open} onClick={handleClick}>
+        <details open={open}>
           <summary>
             <div style={{ display: 'flex' }}>
               <span style={{ marginRight: 'auto' }}>
@@ -37,7 +37,7 @@ function Project({
             <p style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: 0.6 }}>
               {open ? (
                 <span>
-                  {abstract}
+                  <span style={{ color: '#000' }}>{abstract}</span>
                   <p>{authors}</p>
                   <p>
                     <a role="button" href={paper} target="_blank">
@@ -50,7 +50,7 @@ function Project({
                   </p>
                   <br />
                   <br />
-                  <a role="button" disabled>
+                  <a role="button" onClick={handleClick}>
                     Show less...
                   </a>
                 </span>
@@ -59,7 +59,7 @@ function Project({
                   {abstract.substring(0, 200)}...
                   <br />
                   <br />
-                  <a role="button" disabled>
+                  <a role="button" onClick={handleClick}>
                     Show more...
                   </a>
                 </span>
