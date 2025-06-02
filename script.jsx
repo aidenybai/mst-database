@@ -2,9 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import FuzzySearch from 'fuzzy-search';
 
-function Project({
-  opts: { year, title, authors, abstract, keywords, paper, poster },
-}) {
+function Project({ opts }) {
+  const { year, title, authors, abstract, keywords, paper, poster, video } =
+    opts;
   const [open, setOpen] = useState(false);
   const handleClick = (event) => {
     event.preventDefault();
@@ -47,6 +47,14 @@ function Project({
                     <a role="button" target="_blank" href={poster}>
                       Poster
                     </a>
+                    {video && (
+                      <>
+                        {' ・ '}
+                        <a role="button" target="_blank" href={video}>
+                          Video
+                        </a>
+                      </>
+                    )}
                   </p>
                   <br />
                   <br />
@@ -116,6 +124,7 @@ function App() {
         poster,
         notes,
         approved,
+        video,
       }) => {
         return approved === 'yes' ? (
           <ProjectBlock
@@ -128,6 +137,7 @@ function App() {
               paper,
               poster,
               notes,
+              video,
             }}
           />
         ) : (
